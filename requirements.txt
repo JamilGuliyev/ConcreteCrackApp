@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+jinja2
+sqlalchemy
+databases[postgresql]
+psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
+aiofiles
+torch
+torchvision
+pillow
+scikit-learn
+python-dotenv
