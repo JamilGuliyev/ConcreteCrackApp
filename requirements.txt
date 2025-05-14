@@ -13,3 +13,5 @@ torchvision
 pillow
 scikit-learn
 python-dotenv
+
+
