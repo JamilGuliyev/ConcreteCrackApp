@@ -4,6 +4,8 @@ from app.database.db import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
 from app.services.auth_service import hash_password, verify_password, create_access_token
+from app.services.auth_service import get_current_user
+
 
 router = APIRouter()
 
@@ -48,3 +50,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         "access_token": token,
         "token_type": "bearer"
     }
+
+@router.get("/verify-token")
+def verify_token(current_user: User = Depends(get_current_user)):
+    return {"valid": True, "username": current_user.username}

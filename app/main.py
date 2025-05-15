@@ -1,17 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import upload, auth
+from app.routes import auth, upload, analyses
+from app.routes import router as main_router
 import uvicorn
-from app.routes import history
 
-
-
+# Сначала создаем экземпляр FastAPI
 app = FastAPI(
     title="Concrete Crack Analysis",
     description="API for automated analysis of concrete damage from images",
     version="1.0.0"
 )
 
+# Затем добавляем middleware и роутеры
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['http://localhost:5173'],
@@ -20,13 +20,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(history.router, prefix="/api")
-
-app.include_router(auth.router, prefix="/auth")
-app.include_router(upload.router, prefix="/api")
+# Подключаем роутеры
+app.include_router(main_router)
 app.include_router(auth.router, prefix="/api/auth")
+app.include_router(upload.router, prefix="/api/images")
+app.include_router(analyses.router, prefix="/api/analyses")
 
-
+# Базовый эндпоинт
 @app.get("/")
 async def root():
     return {"message": "Concrete Crack Detection API is running"}

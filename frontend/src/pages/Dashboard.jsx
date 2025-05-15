@@ -11,7 +11,21 @@ function Dashboard() {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
+      return;
     }
+
+    const verifyToken = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/verify-token', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Invalid token');
+      } catch {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
+    };
+    verifyToken();
   }, [navigate]);
 
   const handleFileChange = (e) => {
@@ -69,11 +83,11 @@ function Dashboard() {
       </form>
 
       {result && (
-        <div className="mt-6 p-4 bg-gray-800 rounded shadow-md text-left">
+        <div className="mt-6 p-4 bg-gray-800 rounded shadow-md text-left max-w-md w-full">
           <p><strong>Status:</strong> {result.status}</p>
           <p><strong>Message:</strong> {result.message}</p>
           <p><strong>Damage Level:</strong> {result.damage_level}</p>
-          <p><strong>Image Path:</strong> {result.image}</p>
+          <p className="break-all"><strong>Image Path:</strong> {result.image}</p>
         </div>
       )}
     </div>
