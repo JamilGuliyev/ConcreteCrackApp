@@ -20,34 +20,39 @@ async def upload_image(
     file: UploadFile = File(...)
 ):
     """
-    Upload an image for concrete crack analysis.
-    Saves the image, analyzes it, and stores results in database.
+    Загружает изображение, запускает анализ трещин и сохраняет результаты в базу данных.
     """
     try:
-        # Сохраняем файл и получаем результат анализа
+        # Сохраняем изображение на диск
         filepath = await save_uploaded_image(file)
+
+        # Запускаем ИИ-анализ
         result = analyze_crack(filepath)
-        
-        # Сохраняем в базу
+
         db_result = Result(
-            filename=file.filename,
-            damage_level=result.damage_level,
-            analyzed_at=datetime.now(),
-            user_id=current_user.id,
-            image_path=filepath
+        filename=file.filename,
+        damage_level=result.damage_level,  # ✅ обращаемся как к полю объекта
+        analyzed_at=datetime.now(),
+        user_id=current_user.id,
+        image_path=filepath
         )
+
         db.add(db_result)
         db.commit()
         db.refresh(db_result)
-        
+
+        # Возвращаем результат клиенту
         return {
-            **result.model_dump(),
-            "analysis_id": db_result.id
+        "status": result.status,
+        "message": result.message,
+        "image": result.image,
+        "damage_level": result.damage_level,
+        "concrete_class": result.concrete_class
         }
-        
+
     except Exception as e:
         db.rollback()
         raise HTTPException(
             status_code=500,
-            detail=f"Error processing image: {str(e)}"
+            detail=f"Ошибка обработки изображения: {str(e)}"
         )

@@ -56,7 +56,7 @@ function Register() {
             name="username"
             value={form.username}
             onChange={handleChange}
-            placeholder="Username"
+            placeholder="Логин"
             className="w-full p-2 rounded text-black"
             required
             minLength={4}
@@ -77,7 +77,7 @@ function Register() {
             name="password"
             value={form.password}
             onChange={handleChange}
-            placeholder="Password"
+            placeholder="Пароль"
             className="w-full p-2 rounded text-black"
             required
             minLength={6}
